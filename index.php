@@ -1,8 +1,14 @@
 <?php
 require 'flight/Flight.php';
 require 'RedBean/rb-mysql.php';
+require 'stripe\stripe-php-7.107.0/init.php';
 R::setup('mysql:host=localhost;dbname=mkddb', 'root', '');
 Flight::set('flight.views.path', 'tests/views/products');
+$stripeKeys = [
+    'publisher_Key' => 'pk_test_51K6K7gDDfhLaa0mEfluxT1wsKKThLFG2Lq6tQzlS7ooJMcl20Qlp7vzk9t8Cqv6kX11k9z5LUxPHZFZ5BIKCjX3i00NpqxvvAj',
+    'secret_key' => 'sk_test_51K6K7gDDfhLaa0mE3FR4zkidL9KCb6zr4zRP9yWPorP2UkC6lxIOxNCMOoSA29B3RE13FzzGjF9W8vmzGnU4WDWR00VdSl3gUu'
+];
+\Stripe\Stripe::setApiKey($stripeKeys['secret_key']);
 // $product = R::dispense('products');
 // $product->title = 'laptop 1';
 // $product->discription = 'HardDisk 750 gb Hssd  Ram 8Gb ';
@@ -10,31 +16,12 @@ Flight::set('flight.views.path', 'tests/views/products');
 // $product->price = '100000';
 // R::store($product);
 
-// $product->title = 'laptop 2';
-// $product->discription = 'HardDisk 1Tb   Ram 8Gb ';
-// $product->image = 'image2';
-// $product->price = '200000';
-// R::store($product);
-
-// $product->title = 'laptop 3';
-// $product->discription = 'HardDisk 2Tb  Ram 8Gb ';
-// $product->image = 'image3';
-// $product->price = '300000';
-// R::store($product);
-
-// $product->title = 'laptop 4';
-// $product->discription = 'HardDisk 3Tb  Ram 8Gb ';
-// $product->image = 'image4';
-// $product->price = '100000';
-// R::store($product);
-
-// $product->title = 'laptop 5';
-// $product->discription = 'HardDisk 4Tb  Ram 8Gb ';
-// $product->image = 'image5';
-// $product->price = '500000';
-// R::store($product);
-
-// $post = R::load('post', 1);
+// $orders = R::dispense('orders');
+// $orders->productId = 1;
+// $orders->total = 60000;
+// $orders->stripeId = '';
+// $orders->status = 'pass';
+// R::store($orders);
 
 Flight::route('/', function () {
     $products = R::findAll('products');
@@ -42,8 +29,10 @@ Flight::route('/', function () {
 });
 
 Flight::route('/product/(@productId)', function ($productId) {
-    $product = R::load('products', $productId);
-    Flight::render('products.php', array('name' => $product));
+    $Singleproduct = [];
+    $Singleproduct = R::load('products', $productId);
+
+    Flight::render('products.php', ['Singleproduct' => $Singleproduct]);
 });
 
 
